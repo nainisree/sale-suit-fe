@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sale Suit API Explorer</title>
+    <style>
+        :root {
+            --primary: #4ade80;
+            --bg: #0f1710;
+            --text: #e2e8f0;
+            --card: #1a271a;
+            --border: #2d402d;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 { color: var(--primary); }
+        .endpoint-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-right: 10px;
+        }
+        .get { background: #3b82f6; color: white; }
+        .post { background: #10b981; color: white; }
+        .patch { background: #f59e0b; color: white; }
+        .delete { background: #ef4444; color: white; }
+        .url { font-family: monospace; color: #a5f3bc; }
+        .desc { margin-top: 10px; font-size: 0.9rem; color: #94a3b8; }
+        .try-btn {
+            background: var(--primary);
+            color: #111;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            float: right;
+        }
+        .try-btn:hover { opacity: 0.8; }
+        .response-area {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #4ade80;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏪 Sale Suit API Explorer</h1>
+        <p>Interactive API documentation for developers.</p>
+
+        <div id="endpoints"></div>
+    </div>
+
+    <script>
+        const endpoints = [
+            { method: 'POST', url: '/api/auth/login/', desc: 'Login with phone/email and password.' },
+            { method: 'POST', url: '/api/auth/register/', desc: 'Create a new account.' },
+            { method: 'GET', url: '/api/listings/home/', desc: 'Fetch ads and featured listings.' },
+            { method: 'GET', url: '/api/listings/', desc: 'Search and browse business listings.' },
+            { method: 'POST', url: '/api/loans/apply/', desc: 'Submit a loan application (KYC required).' },
+            { method: 'GET', url: '/api/auth/profile/', desc: 'Get current user profile data.' }
+        ];
+
+        const container = document.getElementById('endpoints');
+        endpoints.forEach(ep => {
+            const card = document.createElement('div');
+            card.className = 'endpoint-card';
+            card.innerHTML = `
+                <button class="try-btn" onclick="tryIt('${ep.url}', '${ep.method}', this)">Try</button>
+                <span class="method ${ep.method.toLowerCase()}">${ep.method}</span>
+                <span class="url">${ep.url}</span>
+                <div class="desc">${ep.desc}</div>
+                <div class="response-area"></div>
+            `;
+            container.appendChild(card);
+        });
+
+        async function tryIt(url, method, btn) {
+            const resArea = btn.parentElement.querySelector('.response-area');
+            resArea.style.display = 'block';
+            resArea.innerText = 'Fetching...';
+            
+            try {
+                // Note: This will only work if the server is running and CORS allows it
+                const res = await fetch('http://localhost:8000' + url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await res.json();
+                resArea.innerText = JSON.stringify(data, null, 2);
+            } catch (err) {
+                resArea.innerText = 'Error: ' + err.message + '\nEnsure the backend is running at http://localhost:8000';
+            }
+        }
+    </script>
+</body>
+</html>
