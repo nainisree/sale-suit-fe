@@ -895,7 +895,7 @@ function DocsPage() {
 export default function App() {
   const [page, setPage] = useState('home');
   const [user, setUser] = useState(null);
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState('light');
   const [toasts, setToasts] = useState([]);
   const [filter, setFilter] = useState({});
   const [selectedListing, setSelectedListing] = useState(null);
