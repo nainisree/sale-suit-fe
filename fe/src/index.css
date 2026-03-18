@@ -342,6 +342,49 @@ select.form-input { cursor: pointer; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 .fade-in { animation: fadeIn 0.4s ease; }
 
+@keyframes scrollText {
+  0% { transform: translateY(100%); opacity: 0; }
+  10% { transform: translateY(0); opacity: 1; }
+  40% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(-100%); opacity: 0; }
+  100% { transform: translateY(-100%); opacity: 0; }
+}
+
+.scrolling-header {
+  display: inline-block;
+  height: 1.2em;
+  overflow: hidden;
+  vertical-align: bottom;
+  position: relative;
+  width: 250px;
+  margin-left: 8px;
+}
+
+.scrolling-header span {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  animation: scrollText 4s infinite;
+}
+
+@keyframes infiniteScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-280px * 3 - 16px * 3)); }
+}
+
+.ads-track {
+  display: flex;
+  gap: 16px;
+  animation: infiniteScroll 20s linear infinite;
+  width: max-content;
+}
+
+.ads-container {
+  overflow: hidden;
+  width: 100%;
+  padding: 16px 0;
+}
+
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 .loading { animation: pulse 1.5s infinite; }
 
@@ -351,6 +394,35 @@ select.form-input { cursor: pointer; }
   animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ======= Mobile Menu ======= */
+.mobile-menu-btn {
+  display: none;
+  background: none; border: none; font-size: 1.5rem; color: var(--text); cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .navbar-links { display: none; }
+  .mobile-menu-btn { display: block; }
+  .scrolling-header { width: 180px; }
+}
+
+.mobile-drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; width: 280px;
+  background: var(--bg-card); border-left: 1px solid var(--border);
+  z-index: 1000; padding: 24px; display: flex; flex-direction: column; gap: 20px;
+  transform: translateX(100%); transition: var(--transition);
+}
+.mobile-drawer.open { transform: translateX(0); }
+.drawer-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+  z-index: 999; display: none;
+}
+.drawer-overlay.open { display: block; }
+
+/* ======= About Page ======= */
+.about-section { line-height: 1.8; color: var(--text-dim); }
+.about-section h2 { color: var(--primary); margin: 24px 0 12px; }
 
 /* ======= Toast Notification ======= */
 .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }

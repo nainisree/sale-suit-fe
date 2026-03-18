@@ -34,30 +34,54 @@ function Toast({ toasts }) {
 
 // ===== CATEGORY ICONS =====
 const CATEGORY_ICONS = {
-  tea_shop: '🍵', restaurant: '🍽️', medical_shop: '💊',
-  food_truck: '🚚', cafe: '☕', supermarket: '🛒', other: '🏪',
+  tea_shop: '🍵', restaurant: '🍽️', medical: '💊',
+  continental_cafe: '☕', supermarket: '🛒', furniture: '🪑',
+  shop_equipments: '🛠️', interior_design: '🎨', other: '🏪',
 };
 
 // ========= NAVBAR =========
-function Navbar({ page, setPage, user, theme, toggleTheme, onLogout }) {
+function Navbar({ page, setPage, user, theme, toggleTheme, onLogout, setDrawerOpen }) {
+  const [showSuggest, setShowSuggest] = useState(false);
+  const [suggestForm, setSuggestForm] = useState({ name: '', mobile: '' });
+
+  const handleSuggest = () => {
+    const msg = `Hi, I am ${suggestForm.name} (${suggestForm.mobile}). I want to suggest something for Sale Suit!`;
+    const url = `https://wa.me/919876543210?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+    setShowSuggest(false);
+  };
+
   return (
-    <nav className="navbar">
+    <nav className="navbar" style={{ position: 'relative' }}>
+      <button className="mobile-menu-btn" onClick={() => setDrawerOpen(true)}>☰</button>
       <div className="navbar-brand" onClick={() => setPage('home')} style={{ cursor: 'pointer' }}>
-        <div style={{ background: 'linear-gradient(135deg,#4ade80,#22c55e)', borderRadius: 10, width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>🏪</div>
+        <img src="/logo.png" alt="Sale Suit Logo" className="brand-logo" style={{ width: 40, height: 40, borderRadius: 8 }} />
         <div>
-          <div className="brand-name">Sale Suit</div>
-          <div className="brand-sub">by Samisuits</div>
+          <div className="brand-name">sale suit</div>
+          <div className="brand-sub">by samisuitscompany</div>
         </div>
       </div>
 
       <div className="navbar-links">
         <button className={`nav-link ${page === 'home' ? 'active' : ''}`} onClick={() => setPage('home')}>Home</button>
-        <button className={`nav-link ${page === 'listings' ? 'active' : ''}`} onClick={() => setPage('listings')}>Browse</button>
+        <button className={`nav-link ${page === 'listings' ? 'active' : ''}`} onClick={() => setPage('listings')}>Buy</button>
         <button className={`nav-link ${page === 'sell' ? 'active' : ''}`} onClick={() => setPage('sell')}>Sell</button>
         {user && <button className={`nav-link ${page === 'loans' ? 'active' : ''}`} onClick={() => setPage('loans')}>Credit</button>}
         <button className="nav-link" onClick={() => setPage('contact')}>Connect Us</button>
         <button className="nav-link" onClick={() => setPage('about')}>About</button>
-        <button className={`nav-link ${page === 'docs' ? 'active' : ''}`} onClick={() => setPage('docs')}>📜 API Docs</button>
+        {/* <button className={`nav-link ${page === 'docs' ? 'active' : ''}`} onClick={() => setPage('docs')}>📜 API Docs</button> */}
+        <div style={{ position: 'relative' }}>
+          <button className="nav-link" style={{ color: 'var(--primary)' }} onClick={() => setShowSuggest(!showSuggest)}>💡 Suggest Us</button>
+
+          {showSuggest && (
+            <div className="card" style={{ position: 'absolute', top: '120%', right: 0, padding: 16, zIndex: 100, width: 260, boxShadow: 'var(--shadow-card)' }}>
+              <div style={{ fontWeight: 800, marginBottom: 12, color: 'var(--primary)' }}>Suggest Us (WhatsApp)</div>
+              <input className="form-input" placeholder="Your Name" style={{ marginBottom: 8, width: '100%' }} value={suggestForm.name} onChange={e => setSuggestForm({ ...suggestForm, name: e.target.value })} />
+              <input className="form-input" placeholder="Mobile Number" style={{ marginBottom: 12, width: '100%' }} value={suggestForm.mobile} onChange={e => setSuggestForm({ ...suggestForm, mobile: e.target.value })} />
+              <button className="btn btn-primary btn-sm" style={{ width: '100%' }} onClick={handleSuggest}>Send via WhatsApp</button>
+            </div>
+          )}
+        </div>
         {user?.role === 'admin' && <button className={`nav-link ${page === 'admin' ? 'active' : ''}`} onClick={() => setPage('admin')}>Admin</button>}
       </div>
 
@@ -69,10 +93,84 @@ function Navbar({ page, setPage, user, theme, toggleTheme, onLogout }) {
             <button className="nav-btn" style={{ background: '#1a271a', color: '#f87171', border: '1px solid #f87171' }} onClick={onLogout}>Logout</button>
           </div>
         ) : (
-          <button className="nav-btn" onClick={() => setPage('login')}>Sign In</button>
+          <button className="nav-btn" onClick={() => setPage('login')}>Sign In/up</button>
         )}
       </div>
     </nav>
+  );
+}
+
+// ========= MOBILE DRAWER =========
+function MobileDrawer({ isOpen, onClose, setPage, user, onLogout, theme, toggleTheme }) {
+  const [showSuggest, setShowSuggest] = useState(false);
+  const [suggestForm, setSuggestForm] = useState({ name: '', mobile: '' });
+
+  const handleSuggest = () => {
+    const msg = `Hi, I am ${suggestForm.name} (${suggestForm.mobile}). I want to suggest something for Sale Suit!`;
+    const url = `https://wa.me/919876543210?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+    setShowSuggest(false);
+  };
+
+  return (
+    <>
+      <div className={`drawer-overlay ${isOpen ? 'open' : ''}`} onClick={onClose} />
+      <div className={`mobile-drawer ${isOpen ? 'open' : ''}`}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+          <img src="/logo.png" style={{ width: 32, height: 32 }} />
+          <button className="nav-link" onClick={onClose} style={{ fontSize: '1.5rem' }}>✕</button>
+        </div>
+
+        {user && (
+          <div className="profile-header" style={{ marginBottom: 24, padding: 0 }}>
+            <div className="profile-avatar" style={{ width: 50, height: 50, fontSize: '1.2rem' }}>👤</div>
+            <div>
+              <div style={{ fontWeight: 800 }}>{user.full_name?.split(' ')[0]}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>{user.role}</div>
+            </div>
+          </div>
+        )}
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <button className="nav-link" style={{ textAlign: 'left' }} onClick={() => { setPage('home'); onClose(); }}>🏠 Home</button>
+          <button className="nav-link" style={{ textAlign: 'left' }} onClick={() => { setPage('listings'); onClose(); }}>🛍️ Browse Business</button>
+          <button className="nav-link" style={{ textAlign: 'left' }} onClick={() => { setPage('sell'); onClose(); }}>📢 Post Business</button>
+          <button className="nav-link" style={{ textAlign: 'left' }} onClick={() => { setPage('about'); onClose(); }}>📖 About Us</button>
+          <button className="nav-link" style={{ textAlign: 'left' }} onClick={() => { setPage('contact'); onClose(); }}>📞 Connect Us</button>
+
+          <div className="divider" />
+
+          {user ? (
+            <>
+              <button className="nav-link" style={{ textAlign: 'left' }} onClick={() => { setPage('profile'); onClose(); }}>👤 My Profile</button>
+              <button className="nav-link" style={{ textAlign: 'left' }} onClick={() => { setPage('profile'); onClose(); }}>🔒 Change Password</button>
+              <button className="nav-link" style={{ textAlign: 'left', color: '#f87171' }} onClick={() => { onLogout(); onClose(); }}>Logout</button>
+            </>
+          ) : (
+            <button className="btn btn-primary" onClick={() => { setPage('login'); onClose(); }}>Sign In</button>
+          )}
+
+          <div className="divider" />
+
+          <button className="nav-link" style={{ textAlign: 'left', color: 'var(--primary)' }} onClick={() => setShowSuggest(true)}>💡 Suggest Us</button>
+
+          {showSuggest && (
+            <div className="card" style={{ marginTop: 8, padding: 12 }}>
+              <input className="form-input" placeholder="Your Name" style={{ marginBottom: 8 }} value={suggestForm.name} onChange={e => setSuggestForm({ ...suggestForm, name: e.target.value })} />
+              <input className="form-input" placeholder="Mobile Number" style={{ marginBottom: 8 }} value={suggestForm.mobile} onChange={e => setSuggestForm({ ...suggestForm, mobile: e.target.value })} />
+              <button className="btn btn-primary btn-sm" style={{ width: '100%' }} onClick={handleSuggest}>Send via WhatsApp</button>
+            </div>
+          )}
+        </div>
+
+        <div style={{ marginTop: 'auto', textAlign: 'center' }}>
+          <button className="theme-toggle" style={{ margin: '0 auto 16px' }} onClick={toggleTheme}>{theme === 'dark' ? '☀️' : '🌙'}</button>
+          <div style={{ display: 'flex', gap: 20, justifyContent: 'center' }}>
+            <span>📘</span><span>📸</span><span>🐦</span><span>📺</span>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -123,7 +221,8 @@ function LoginPage({ setPage, onLogin, showToast }) {
     <div className="auth-page fade-in">
       <div className="auth-card">
         <div className="auth-logo">
-          <h1>🏪 Sale Suit</h1>
+          <h1> Sale Suit</h1>
+          {/* <img src='logo.png' className='w-12 h-12'></img> */}
           <p>by Samisuits — Business Marketplace</p>
         </div>
 
@@ -209,13 +308,16 @@ function LoginPage({ setPage, onLogin, showToast }) {
 
 // ========= HOME PAGE =========
 function HomePage({ setPage, setFilter, user }) {
+  const [showMedicalModal, setShowMedicalModal] = useState(false);
   const categories = [
     { key: 'tea_shop', label: 'Tea Shop', icon: '🍵' },
+    { key: 'medical', label: 'Medical', icon: '💊' },
+    { key: 'continental_cafe', label: 'Continental Cafe', icon: '☕' },
     { key: 'restaurant', label: 'Restaurant', icon: '🍽️' },
-    { key: 'medical_shop', label: 'Medical Shop', icon: '💊' },
-    { key: 'food_truck', label: 'Food Truck', icon: '🚚' },
-    { key: 'cafe', label: 'Cafe', icon: '☕' },
-    { key: 'supermarket', label: 'Supermarket', icon: '🛒' },
+    { key: 'supermarket', label: 'Supermarkets', icon: '🛒' },
+    { key: 'furniture', label: 'Furniture', icon: '🪑' },
+    { key: 'shop_equipments', label: 'Shop Equipments', icon: '🛠️' },
+    { key: 'interior_design', label: 'Interior Design', icon: '🎨' },
   ];
   const mockAds = [
     { id: 1, title: '🏦 NBFC Loans for Business Buyers', sub: 'Get up to ₹50 Lakh instantly', color: '#166534' },
@@ -228,24 +330,33 @@ function HomePage({ setPage, setFilter, user }) {
     <div className="fade-in">
       {/* Hero */}
       <div className="hero">
-        <h1>Buy & Sell <span>Businesses</span> with Confidence</h1>
-        <p>India's most trusted marketplace for tea shops, restaurants, cafes, medical shops & more.</p>
+        <h1>
+          <span>
+            {['Buy Business,', 'Sell Business'].map((text, i) => (
+              <div key={text} className="scrolling-header">
+                <span style={{ animationDelay: `${i * 45}s` }}>{text}</span>
+              </div>
+            ))}
+          </span>
+          <br />
+        </h1>
+        <p>India's most trusted marketplace for tea shops, continental cafes, medical & more.</p>
         <div className="search-bar">
           <span>🔍</span>
           <input placeholder="Search by business type, city..." value={search} onChange={e => setSearch(e.target.value)} />
           <button className="btn btn-primary" onClick={() => { setFilter({ search }); setPage('listings'); }}>Search</button>
         </div>
         <div className="hero-actions">
-          <button className="btn btn-primary" onClick={() => setPage('listings')}>🛍️ Browse Listings</button>
-          <button className="btn btn-outline" onClick={() => setPage('sell')}>📢 Post Your Business</button>
+          <button className="btn btn-primary" onClick={() => setPage('listings')}>🛍️ Browse Business</button>
+          <button className="btn btn-outline" onClick={() => setPage('sell')}>📢 Post Business</button>
         </div>
       </div>
 
       {/* Ads */}
-      <div style={{ padding: '0 0 8px' }}>
-        <div className="ads-strip">
-          {mockAds.map(ad => (
-            <div key={ad.id} className="ad-card" style={{ background: `linear-gradient(135deg, ${ad.color}44, #111a11)` }}>
+      <div className="ads-container">
+        <div className="ads-track">
+          {[...mockAds, ...mockAds].map((ad, i) => (
+            <div key={`${ad.id}-${i}`} className="ad-card" style={{ background: `linear-gradient(135deg, ${ad.color}44, #111a11)` }}>
               <div className="ad-badge">AD</div>
               <div>
                 <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>{ad.title}</div>
@@ -261,13 +372,34 @@ function HomePage({ setPage, setFilter, user }) {
         <div className="section-title">Browse by <span>Category</span></div>
         <div className="categories-grid">
           {categories.map(c => (
-            <div key={c.key} className="category-card" onClick={() => { setFilter({ category: c.key }); setPage('listings'); }}>
+            <div key={c.key} className="category-card" onClick={() => {
+              if (c.key === 'medical') {
+                setShowMedicalModal(true);
+              } else {
+                setFilter({ category: c.key });
+                setPage('listings');
+              }
+            }}>
               <div className="category-icon">{c.icon}</div>
               <div className="category-name">{c.label}</div>
             </div>
           ))}
         </div>
       </div>
+
+      {showMedicalModal && (
+        <>
+          <div className="drawer-overlay open" onClick={() => setShowMedicalModal(false)} style={{ zIndex: 1000 }} />
+          <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'var(--bg-card)', padding: 32, borderRadius: 24, zIndex: 1001, border: '1px solid var(--primary)', width: '90%', maxWidth: 400, textAlign: 'center' }}>
+            <h2 style={{ marginBottom: 16 }}>Select Business Type</h2>
+            <div style={{ display: 'grid', gap: 12 }}>
+              <button className="btn btn-outline" onClick={() => { setFilter({ category: 'medical', sub_category: 'retailer' }); setPage('listings'); }}>Retailer</button>
+              <button className="btn btn-outline" onClick={() => { setFilter({ category: 'medical', sub_category: 'distributor' }); setPage('listings'); }}>Distributor</button>
+            </div>
+            <button className="nav-link" style={{ marginTop: 16 }} onClick={() => setShowMedicalModal(false)}>Cancel</button>
+          </div>
+        </>
+      )}
 
       {/* Why Sale Suit */}
       <div className="section" style={{ paddingTop: 0 }}>
@@ -276,7 +408,7 @@ function HomePage({ setPage, setFilter, user }) {
           {[
             { icon: '✅', title: 'KYC Verified Users', desc: 'Every user verified with Aadhar, PAN & business licenses.' },
             { icon: '🏦', title: 'NBFC Loan Support', desc: 'Apply for business loans directly on our platform.' },
-            { icon: '🗂️', title: 'Multiple Categories', desc: 'Tea shops, restaurants, cafes, medical stores & more.' },
+            { icon: '🛍️', title: 'Multiple Categories', desc: 'Tea shops, restaurants, continental cafes, medical stores & more.' },
             { icon: '🤝', title: 'Mediator Network', desc: 'Certified mediators to assist your deal closure.' },
           ].map(f => (
             <div key={f.title} className="card">
@@ -287,6 +419,20 @@ function HomePage({ setPage, setFilter, user }) {
           ))}
         </div>
       </div>
+
+      {/* Join Section */}
+      {!user && (
+        <div className="section" style={{ paddingBottom: 60 }}>
+          <div className="card" style={{ background: 'linear-gradient(135deg, #1a271a, #0a0f0a)', textAlign: 'center', padding: '40px 24px', border: '1px solid var(--primary)' }}>
+            <h2 style={{ fontSize: '1.8rem', marginBottom: 12 }}>Ready to start your journey?</h2>
+            <p style={{ color: 'var(--text-dim)', marginBottom: 24, maxWidth: 500, margin: '0 auto 24px' }}>Join thousands of business owners and buyers on India's most secure platform.</p>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+              <button className="btn btn-primary" onClick={() => setPage('login')}>Sign In</button>
+              <button className="btn btn-outline" onClick={() => setPage('login')}>Create Account</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -313,8 +459,18 @@ function ListingsPage({ filter, setFilter, setPage, setSelectedListing }) {
     return true;
   });
 
-  const categories = ['', 'tea_shop', 'restaurant', 'medical_shop', 'food_truck', 'cafe', 'supermarket'];
-  const catLabels = { '': 'All', tea_shop: 'Tea Shop', restaurant: 'Restaurant', medical_shop: 'Medical', food_truck: 'Food Truck', cafe: 'Cafe', supermarket: 'Supermarket' };
+  const categories = ['', 'tea_shop', 'medical', 'continental_cafe', 'restaurant', 'supermarket', 'furniture', 'shop_equipments', 'interior_design'];
+  const catLabels = {
+    '': 'All',
+    tea_shop: 'Tea Shop',
+    medical: 'Medical',
+    continental_cafe: 'Continental Cafe',
+    restaurant: 'Restaurant',
+    supermarket: 'Supermarkets',
+    furniture: 'Furniture',
+    shop_equipments: 'Shop Equipments',
+    interior_design: 'Interior Design'
+  };
 
   return (
     <div className="section fade-in" style={{ maxWidth: '100%', padding: '32px 24px' }}>
@@ -372,7 +528,17 @@ function ListingsPage({ filter, setFilter, setPage, setSelectedListing }) {
 // ========= LISTING DETAIL =========
 function ListingDetailPage({ listing, setPage, user, showToast }) {
   if (!listing) return null;
-  const catLabels = { tea_shop: 'Tea Shop', restaurant: 'Restaurant', medical_shop: 'Medical Shop', food_truck: 'Food Truck', cafe: 'Cafe', supermarket: 'Supermarket', other: 'Other' };
+  const catLabels = {
+    tea_shop: 'Tea Shop',
+    medical: 'Medical',
+    continental_cafe: 'Continental Cafe',
+    restaurant: 'Restaurant',
+    supermarket: 'Supermarkets',
+    furniture: 'Furniture',
+    shop_equipments: 'Shop Equipments',
+    interior_design: 'Interior Design',
+    other: 'Other'
+  };
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 24px' }} className="fade-in">
@@ -464,11 +630,13 @@ function SellPage({ user, setPage, showToast }) {
             <label className="form-label">Category *</label>
             <select className="form-input" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
               <option value="tea_shop">Tea Shop</option>
+              <option value="medical">Medical</option>
+              <option value="continental_cafe">Continental Cafe</option>
               <option value="restaurant">Restaurant</option>
-              <option value="medical_shop">Medical Shop</option>
-              <option value="food_truck">Food Truck</option>
-              <option value="cafe">Cafe</option>
               <option value="supermarket">Supermarket</option>
+              <option value="furniture">Furniture</option>
+              <option value="shop_equipments">Shop Equipments</option>
+              <option value="interior_design">Interior Design</option>
               <option value="other">Other</option>
             </select>
           </div>
@@ -854,11 +1022,11 @@ function ContactPage({ user, showToast }) {
 // ========= ABOUT PAGE =========
 function AboutPage() {
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '40px 24px' }} className="fade-in">
+    <div style={{ maxWidth: 800, margin: '0 auto', padding: '40px 24px' }} className="fade-in about-section">
       <div style={{ textAlign: 'center', marginBottom: 40 }}>
         <div style={{ fontSize: '4rem', marginBottom: 12 }}>🏪</div>
         <h1 style={{ fontSize: '2.5rem', fontWeight: 900 }}>About <span className="text-primary">Sale Suit</span></h1>
-        <p style={{ color: 'var(--text-dim)', fontSize: '1.05rem', marginTop: 10 }}>India's most trusted business marketplace, by Samisuits</p>
+        <p style={{ color: 'var(--text-dim)', fontSize: '1.05rem', marginTop: 10 }}>India's trusted business marketplace, by samisuitscompany</p>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -866,10 +1034,10 @@ function AboutPage() {
           { title: 'Our Mission', content: 'Sale Suit connects business buyers and sellers across India with trust, transparency, and technology. We specialize in helping entrepreneurs find the right business opportunities.' },
           { title: 'KYC Verification', content: 'Every user on our platform goes through a rigorous verification process including PAN Card, Aadhar Card, Food License, and Drug License verification. This ensures a safe marketplace for everyone.' },
           { title: 'NBFC Loan Support', content: 'We partner with leading NBFCs to provide financing options for business buyers. Our loan support helps entrepreneurs acquire businesses even with limited capital.' },
-          { title: 'Our Categories', content: 'We support Tea Shops, Restaurants, Cafes, Medical Shops, Food Trucks, Supermarkets and more. If it\'s a business, it belongs on Sale Suit.' },
+          { title: 'Our Categories', content: 'We support Tea Shops, Restaurants, Continental Cafes, Medical, Supermarkets and more. If it\'s a business, it belongs on Sale Suit.' },
         ].map(item => (
-          <div key={item.title} className="card">
-            <div style={{ fontWeight: 800, fontSize: '1.1rem', marginBottom: 10, color: 'var(--primary)' }}>{item.title}</div>
+          <div key={item.title} className="card about-card">
+            <h2 style={{ fontWeight: 800, fontSize: '1.2rem', marginBottom: 10, color: 'var(--primary)' }}>{item.title}</h2>
             <p style={{ color: 'var(--text-dim)', lineHeight: 1.8 }}>{item.content}</p>
           </div>
         ))}
@@ -882,8 +1050,8 @@ function AboutPage() {
 function DocsPage() {
   return (
     <div style={{ height: 'calc(100vh - 100px)', padding: '20px' }} className="fade-in">
-      <iframe 
-        src="/api_explorer.html" 
+      <iframe
+        src="/api_explorer.html"
         style={{ width: '100%', height: '100%', border: 'none', borderRadius: '12px', background: 'var(--card)' }}
         title="API Documentation"
       ></iframe>
@@ -895,16 +1063,17 @@ function DocsPage() {
 export default function App() {
   const [page, setPage] = useState('home');
   const [user, setUser] = useState(null);
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState('light');
   const [toasts, setToasts] = useState([]);
   const [filter, setFilter] = useState({});
   const [selectedListing, setSelectedListing] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.className = theme === 'light' ? 'light-theme' : '';
   }, [theme]);
 
-  const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark');
+  const toggleTheme = () => setTheme(t => t === 'light' ? 'dark' : 'light');
 
   const showToast = (msg, type = 'success') => {
     const id = Date.now();
@@ -926,7 +1095,8 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <Navbar page={page} setPage={setPage} user={user} theme={theme} toggleTheme={toggleTheme} onLogout={handleLogout} />
+      <Navbar page={page} setPage={setPage} user={user} theme={theme} toggleTheme={toggleTheme} onLogout={handleLogout} setDrawerOpen={setDrawerOpen} />
+      <MobileDrawer isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} setPage={setPage} user={user} onLogout={handleLogout} theme={theme} toggleTheme={toggleTheme} />
       <main className="main-content">
         {page === 'home' && <HomePage setPage={setPage} setFilter={setFilter} user={user} />}
         {page === 'login' && <LoginPage setPage={setPage} onLogin={handleLogin} showToast={showToast} />}
@@ -942,9 +1112,18 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer style={{ borderTop: '1px solid var(--border)', padding: '24px', textAlign: 'center', color: 'var(--text-dim)', fontSize: '0.85rem' }}>
-        <div style={{ fontWeight: 700, color: 'var(--primary)', marginBottom: 6 }}>🏪 Sale Suit by Samisuits</div>
-        <div>India's Trusted Business Marketplace · © 2024 Samisuits · All Rights Reserved</div>
+      <footer style={{ borderTop: '1px solid var(--border)', padding: '32px 24px', textAlign: 'center', color: 'var(--text-dim)', fontSize: '0.85rem' }}>
+        <div style={{ fontWeight: 700, color: 'var(--primary)', marginBottom: 8, fontSize: '1rem' }}>sale suit by samisuitscompany</div>
+        <div style={{ marginBottom: 16 }}>India's Trusted Business Marketplace</div>
+
+        <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginBottom: 20, fontSize: '1.5rem' }}>
+          <a href="#" style={{ color: '#60a5fa' }} title="Twitter">🐦</a>
+          <a href="#" style={{ color: '#3b82f6' }} title="Facebook">📘</a>
+          <a href="#" style={{ color: '#ec4899' }} title="Instagram">📸</a>
+          <a href="#" style={{ color: '#84cc16' }} title="WhatsApp">💬</a>
+        </div>
+
+        <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>© 2024 samisuitscompany · All Rights Reserved</div>
       </footer>
 
       <Toast toasts={toasts} />
