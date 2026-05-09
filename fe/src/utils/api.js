@@ -1,5 +1,6 @@
 // ===== API CONFIG =====
-const API = 'https://sale-suit-be.onrender.com';
+const API_URL =import.meta.env.VITE_API_URL || 'http://localhost:5000'; 
+  fetch(`${API_URL}/api/auth/login`);
 
 export const api = async (endpoint, method = 'GET', body = null, isForm = false) => {
   const opts = {
