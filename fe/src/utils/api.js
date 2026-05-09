@@ -1,5 +1,5 @@
 // ===== API CONFIG =====
-const API = 'http://localhost:8000/api';
+const API = 'https://sale-suit-be.onrender.com';
 
 export const api = async (endpoint, method = 'GET', body = null, isForm = false) => {
   const opts = {
